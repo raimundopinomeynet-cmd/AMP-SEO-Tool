@@ -1,0 +1,31 @@
+---
+# cPanel Git Version Control — Deployment configuration
+# Triggered automatically on git push (if "Automatic Deployment" is enabled),
+# or manually from cPanel > Git Version Control > Manage > Deploy.
+#
+# Adjust DEPLOYPATH to match your cPanel home directory and application folder.
+# Example: /home/gaesuser/gaes-dashboard
+#
+# The Node.js Application in cPanel must be configured BEFORE running this:
+#   - Application root:  gaes-dashboard/
+#   - Application URL:   your subdomain or domain
+#   - Application startup file: server/index.js
+#   - Node.js version: 18 or higher
+
+deployment:
+  tasks:
+    # 1. Set the deploy destination (adjust username and folder as needed)
+    - export DEPLOYPATH=/home/$USER/gaes-dashboard
+
+    # 2. Copy repository files to the application directory
+    - /bin/cp -R . $DEPLOYPATH
+
+    # 3. Install server dependencies (production only — no devDependencies)
+    - cd $DEPLOYPATH && npm install --prefix server --omit=dev
+
+    # 4. Install client dependencies and build React app
+    - cd $DEPLOYPATH && npm install --prefix client
+    - cd $DEPLOYPATH && npm run build
+
+    # 5. Clean up client node_modules after build (saves disk space, optional)
+    # - /bin/rm -rf $DEPLOYPATH/client/node_modules
