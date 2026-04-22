@@ -1,4 +1,11 @@
 @import "tailwindcss";
+@config "./tailwind.config.js";
+
+@theme {
+  --color-brand: #C5003E;
+  --color-dark: #222222;
+  --color-light: #ffffff;
+}
 
 body {
   margin: 0;
