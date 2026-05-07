@@ -1,6 +1,11 @@
 const express = require('express')
 const router = express.Router()
 const axios = require('axios')
+const https = require('https')
+
+// cPanel and some corporate networks intercept TLS; bypass cert verification
+// only for outbound DataForSEO requests — does not affect incoming traffic.
+const httpsAgent = new https.Agent({ rejectUnauthorized: false })
 
 function basicAuth() {
   const login = process.env.DATAFORSEO_LOGIN
@@ -31,6 +36,7 @@ router.post('/organic', async (req, res) => {
       {
         headers: { Authorization: auth, 'Content-Type': 'application/json' },
         timeout: 30000,
+        httpsAgent,
       }
     )
 
